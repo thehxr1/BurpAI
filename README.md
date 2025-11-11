@@ -68,7 +68,7 @@ Together, they enable:
 
 ---
 
-## 🚀 Quick Start (5 Minutes)
+## 🚀 Quick Start
 
 ### Prerequisites
 
