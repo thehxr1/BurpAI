@@ -179,7 +179,7 @@ Add both MCP servers:
   "mcpServers": {
     "burp-scan-automation": {
       "command": "python",
-      "args": ["C:\\Projects\\Burp\\burp_cli\\mcp_server\\server.py"],
+      "args": ["C:\\Projects\\burpAI\\burp_cli\\mcp_server\\server.py"],
       "env": {
         "BURP_API_URL": "http://127.0.0.1:1337",
         "BURP_API_KEY": "PASTE_YOUR_ACTUAL_API_KEY_HERE"
@@ -594,6 +594,14 @@ burpAI/
 - [MCP Protocol Specification](https://modelcontextprotocol.io/)
 - [PortSwigger MCP Repository](https://github.com/PortSwigger/mcp-server)
 - [Claude Desktop Documentation](https://claude.ai/desktop)
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/thehxr1/BurpAI/issues).
+
+**Like this project?** Follow my security research blog: [https://hxr1.ghost.io](https://hxr1.ghost.io)
 
 ---
 
