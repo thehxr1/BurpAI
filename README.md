@@ -597,12 +597,6 @@ burpAI/
 
 ---
 
-## 🤝 Contributing
-
-This is a private project. For questions or issues, contact the maintainer.
-
----
-
 ## 📄 License
 
 MIT License - See LICENSE file for details.
