@@ -52,9 +52,9 @@ burp-cli = "burp_cli.cli.main:app"
 burp-mcp = "burp_cli.mcp_server.server:main"
 
 [project.urls]
-Homepage = "https://github.com/thehxr1/MyWork"
-Repository = "https://github.com/thehxr1/MyWork"
-Issues = "https://github.com/thehxr1/MyWork/issues"
+Homepage = "https://github.com/thehxr1/burpAI"
+Repository = "https://github.com/thehxr1/burpAI"
+Issues = "https://github.com/thehxr1/burpAI/issues"
 
 [tool.setuptools]
 package-dir = {"" = "."}
