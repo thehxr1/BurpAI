@@ -1,0 +1,1637 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "v0.1",
+        "title": "Burp API (Desktop)"
+    },
+    "servers": [
+        {
+            "url": "./"
+        }
+    ],
+    "paths": {
+        "/configuration": {
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "$ref": "#/components/schemas/ConfigurationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "configuration"
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/knowledge_base/issue_definitions": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "issue_definitions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "$ref": "#/components/schemas/IssueDefinition"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/scan": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "$ref": "#/components/schemas/Scan"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "scan",
+                        "headers": {
+                            "Location": {
+                                "description": "relative location of created resource",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/scan/{scan.task_id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "after",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Limit results to IssueEvents after a given IssueEvent ID"
+                    },
+                    {
+                        "name": "issue_events",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": -2147483648,
+                            "maximum": 2147483647
+                        },
+                        "description": "Maximum number of IssueEvents to return"
+                    },
+                    {
+                        "name": "scan.task_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "scan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/ScanProgress"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ApplicationLogin": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/UsernameAndPasswordLogin"
+                    },
+                    {
+                        "$ref": "#/components/schemas/RecordedLogin"
+                    }
+                ],
+                "discriminator": {
+                    "propertyName": "type"
+                }
+            },
+            "Configuration": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/NamedConfiguration"
+                    },
+                    {
+                        "$ref": "#/components/schemas/CustomConfiguration"
+                    }
+                ],
+                "discriminator": {
+                    "propertyName": "type"
+                }
+            },
+            "Error": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/ServerError"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ClientError"
+                    }
+                ],
+                "discriminator": {
+                    "propertyName": "type"
+                }
+            },
+            "Evidence": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/FirstOrderEvidence"
+                    },
+                    {
+                        "$ref": "#/components/schemas/InformationListEvidence"
+                    },
+                    {
+                        "$ref": "#/components/schemas/StoredEvidence"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TimingBasedEvidence"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DiffableEvidence"
+                    },
+                    {
+                        "$ref": "#/components/schemas/CollaboratorEvidence"
+                    },
+                    {
+                        "$ref": "#/components/schemas/StaticJavascriptAnalysisEvidence"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DynamicJavascriptAnalysisEvidence"
+                    },
+                    {
+                        "$ref": "#/components/schemas/InfiltratorEvidence"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PrototypePollutionEvidence"
+                    }
+                ],
+                "discriminator": {
+                    "propertyName": "type"
+                }
+            },
+            "Scope": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/SimpleScope"
+                    },
+                    {
+                        "$ref": "#/components/schemas/AdvancedScope"
+                    }
+                ],
+                "discriminator": {
+                    "propertyName": "type"
+                }
+            },
+            "Segment": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/DataSegment"
+                    },
+                    {
+                        "$ref": "#/components/schemas/HighlightSegment"
+                    },
+                    {
+                        "$ref": "#/components/schemas/SnipSegment"
+                    }
+                ],
+                "discriminator": {
+                    "propertyName": "type"
+                }
+            },
+            "AdvScopeDefRuleProtocol": {
+                "type": "string",
+                "enum": [
+                    "any",
+                    "http",
+                    "https"
+                ]
+            },
+            "AdvancedScope": {
+                "type": "object",
+                "properties": {
+                    "include": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/AdvancedScopeDef"
+                        }
+                    },
+                    "exclude": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/AdvancedScopeDef"
+                        }
+                    }
+                }
+            },
+            "AdvancedScopeDef": {
+                "type": "object",
+                "required": [
+                    "protocol"
+                ],
+                "properties": {
+                    "protocol": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/AdvScopeDefRuleProtocol"
+                    },
+                    "host_or_ip_range": {
+                        "type": "string"
+                    },
+                    "port": {
+                        "type": "string"
+                    },
+                    "file": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AuthenticationStatusCheck": {
+                "type": "object",
+                "required": [
+                    "url"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "confirmation_text": {
+                        "type": "string"
+                    },
+                    "matcher": {
+                        "type": "string"
+                    }
+                }
+            },
+            "BandFlag": {
+                "type": "string",
+                "enum": [
+                    "in_band",
+                    "out_of_band",
+                    "infiltrator_band"
+                ]
+            },
+            "BurpStatus": {
+                "type": "string",
+                "enum": [
+                    "not_ready",
+                    "ready"
+                ]
+            },
+            "Callback": {
+                "type": "object",
+                "required": [
+                    "url"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ClientError": {
+                "type": "object",
+                "required": [
+                    "error"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "error": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CodeSnippet": {
+                "type": "object",
+                "required": [
+                    "code",
+                    "offset"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "string"
+                    },
+                    "offset": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    }
+                }
+            },
+            "CollaboratorEvidence": {
+                "type": "object",
+                "required": [
+                    "detail"
+                ],
+                "properties": {
+                    "detail": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/EvidenceDetail"
+                    },
+                    "request_response": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/RequestResponse"
+                    },
+                    "dns_event": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/DnsCollaboratorEvent"
+                    },
+                    "http_event": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/HttpCollaboratorEvent"
+                    },
+                    "smtp_event": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/SmtpCollaboratorEvent"
+                    }
+                }
+            },
+            "Confidence": {
+                "type": "string",
+                "enum": [
+                    "certain",
+                    "firm",
+                    "tentative",
+                    "undefined"
+                ]
+            },
+            "ConfigurationRequest": {
+                "type": "object",
+                "required": [
+                    "configurations"
+                ],
+                "properties": {
+                    "configurations": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/Configuration"
+                        }
+                    }
+                }
+            },
+            "CustomConfiguration": {
+                "type": "object",
+                "required": [
+                    "config"
+                ],
+                "properties": {
+                    "config": {
+                        "type": "string",
+                        "description": "Configurations exported from Burp"
+                    }
+                }
+            },
+            "DataSegment": {
+                "type": "object",
+                "required": [
+                    "data",
+                    "length"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "string",
+                        "format": "byte"
+                    },
+                    "length": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    }
+                }
+            },
+            "DiffableEvidence": {
+                "type": "object",
+                "required": [
+                    "first_evidence",
+                    "second_evidence"
+                ],
+                "properties": {
+                    "first_evidence": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Evidence"
+                    },
+                    "second_evidence": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Evidence"
+                    }
+                }
+            },
+            "DnsCollaboratorEvent": {
+                "type": "object",
+                "required": [
+                    "query_type",
+                    "domain",
+                    "query",
+                    "time_stamp",
+                    "time_between_sending_payload_and_receiving_interaction",
+                    "source_ip_address",
+                    "type",
+                    "interaction_id",
+                    "description"
+                ],
+                "properties": {
+                    "query_type": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "domain": {
+                        "type": "string"
+                    },
+                    "query": {
+                        "type": "string",
+                        "format": "byte"
+                    },
+                    "time_stamp": {
+                        "type": "string"
+                    },
+                    "time_between_sending_payload_and_receiving_interaction": {
+                        "type": "string",
+                        "description": "64-bit integer represented as a string"
+                    },
+                    "source_ip_address": {
+                        "type": "string"
+                    },
+                    "source_port": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "type": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/ReportableCollaboratorEventType"
+                    },
+                    "interaction_id": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DynamicJavascriptAnalysisEvidence": {
+                "type": "object",
+                "required": [
+                    "detail",
+                    "javascript_request_responses",
+                    "source_caption",
+                    "sink_caption",
+                    "composable_evidence",
+                    "source_stack_trace",
+                    "sink_stack_trace",
+                    "event_listener_stack_trace",
+                    "source_value",
+                    "sink_value",
+                    "origin",
+                    "origin_checked",
+                    "event_handler_data",
+                    "event_handler_data_type",
+                    "event_handler_modified_data",
+                    "source_element_id",
+                    "source_element_name",
+                    "event_fired_event_name",
+                    "event_fired_element_id",
+                    "event_fired_element_name",
+                    "event_fired_outer_html"
+                ],
+                "properties": {
+                    "detail": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/EvidenceDetail"
+                    },
+                    "javascript_request_responses": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/RequestResponse"
+                        }
+                    },
+                    "source_caption": {
+                        "type": "string"
+                    },
+                    "sink_caption": {
+                        "type": "string"
+                    },
+                    "composable_evidence": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Evidence"
+                    },
+                    "source_stack_trace": {
+                        "type": "string"
+                    },
+                    "sink_stack_trace": {
+                        "type": "string"
+                    },
+                    "event_listener_stack_trace": {
+                        "type": "string"
+                    },
+                    "source_value": {
+                        "type": "string"
+                    },
+                    "sink_value": {
+                        "type": "string"
+                    },
+                    "poc": {
+                        "type": "string"
+                    },
+                    "origin": {
+                        "type": "string"
+                    },
+                    "origin_checked": {
+                        "type": "boolean"
+                    },
+                    "event_handler_data": {
+                        "type": "string"
+                    },
+                    "event_handler_data_type": {
+                        "type": "string"
+                    },
+                    "event_handler_modified_data": {
+                        "type": "string"
+                    },
+                    "source_element_id": {
+                        "type": "string"
+                    },
+                    "source_element_name": {
+                        "type": "string"
+                    },
+                    "event_fired_event_name": {
+                        "type": "string"
+                    },
+                    "event_fired_element_id": {
+                        "type": "string"
+                    },
+                    "event_fired_element_name": {
+                        "type": "string"
+                    },
+                    "event_fired_outer_html": {
+                        "type": "string"
+                    }
+                }
+            },
+            "EvidenceDetail": {
+                "type": "object",
+                "required": [
+                    "band_flags"
+                ],
+                "properties": {
+                    "payload": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Payload"
+                    },
+                    "band_flags": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/BandFlag"
+                        }
+                    }
+                }
+            },
+            "FirstOrderEvidence": {
+                "type": "object",
+                "required": [
+                    "detail",
+                    "request_response"
+                ],
+                "properties": {
+                    "detail": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/EvidenceDetail"
+                    },
+                    "request_response": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/RequestResponse"
+                    }
+                }
+            },
+            "Heartbeat": {
+                "type": "object",
+                "required": [
+                    "burp_status",
+                    "burp_uri"
+                ],
+                "properties": {
+                    "burp_status": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/BurpStatus"
+                    },
+                    "burp_uri": {
+                        "type": "string"
+                    }
+                }
+            },
+            "HighlightSegment": {
+                "type": "object",
+                "required": [
+                    "data",
+                    "length"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "string",
+                        "format": "byte"
+                    },
+                    "length": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    }
+                }
+            },
+            "HookedMethod": {
+                "type": "object",
+                "required": [
+                    "platform",
+                    "target_api",
+                    "signature"
+                ],
+                "properties": {
+                    "platform": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "target_api": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "signature": {
+                        "type": "string"
+                    },
+                    "target_parameter": {
+                        "type": "string"
+                    },
+                    "target_parameter_value": {
+                        "type": "string"
+                    },
+                    "stack_trace": {
+                        "type": "string"
+                    }
+                }
+            },
+            "HttpCollaboratorEvent": {
+                "type": "object",
+                "required": [
+                    "protocol",
+                    "request_response",
+                    "time_stamp",
+                    "time_between_sending_payload_and_receiving_interaction",
+                    "source_ip_address",
+                    "type",
+                    "interaction_id",
+                    "description"
+                ],
+                "properties": {
+                    "protocol": {
+                        "type": "string"
+                    },
+                    "request_response": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/RequestResponse"
+                    },
+                    "time_stamp": {
+                        "type": "string"
+                    },
+                    "time_between_sending_payload_and_receiving_interaction": {
+                        "type": "string",
+                        "description": "64-bit integer represented as a string"
+                    },
+                    "source_ip_address": {
+                        "type": "string"
+                    },
+                    "source_port": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "type": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/ReportableCollaboratorEventType"
+                    },
+                    "interaction_id": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "InfiltratorEvent": {
+                "type": "object",
+                "required": [
+                    "collaborator_evidence",
+                    "hooked_method",
+                    "collaborator_payload_id"
+                ],
+                "properties": {
+                    "collaborator_evidence": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/CollaboratorEvidence"
+                    },
+                    "hooked_method": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/HookedMethod"
+                    },
+                    "collaborator_payload_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    }
+                }
+            },
+            "InfiltratorEvidence": {
+                "type": "object",
+                "required": [
+                    "infiltrator_events"
+                ],
+                "properties": {
+                    "infiltrator_events": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/InfiltratorEvent"
+                        }
+                    }
+                }
+            },
+            "InformationListEvidence": {
+                "type": "object",
+                "required": [
+                    "request_response",
+                    "information_items"
+                ],
+                "properties": {
+                    "request_response": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/RequestResponse"
+                    },
+                    "information_items": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "InsertionPointIdentifier": {
+                "type": "object",
+                "required": [
+                    "type_index",
+                    "name"
+                ],
+                "properties": {
+                    "type_index": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Issue": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "type_index",
+                    "serial_number",
+                    "origin",
+                    "path",
+                    "severity",
+                    "confidence",
+                    "caption",
+                    "evidence",
+                    "internal_data"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Friendly name for the issue type. Subject to change so use index in preference"
+                    },
+                    "type_index": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "serial_number": {
+                        "type": "string",
+                        "description": "64-bit integer represented as a string"
+                    },
+                    "origin": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "severity": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Severity"
+                    },
+                    "confidence": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Confidence"
+                    },
+                    "user_overridden_severity": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Severity"
+                    },
+                    "user_overridden_confidence": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Confidence"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "remediation": {
+                        "type": "string"
+                    },
+                    "issue_background": {
+                        "type": "string"
+                    },
+                    "remediation_background": {
+                        "type": "string"
+                    },
+                    "caption": {
+                        "type": "string"
+                    },
+                    "evidence": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/Evidence"
+                        }
+                    },
+                    "internal_data": {
+                        "type": "string"
+                    },
+                    "extension_name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "IssueDefinition": {
+                "type": "object",
+                "required": [
+                    "issue_type_id",
+                    "name",
+                    "description"
+                ],
+                "properties": {
+                    "issue_type_id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "remediation": {
+                        "type": "string"
+                    },
+                    "references": {
+                        "type": "string"
+                    },
+                    "vulnerability_classifications": {
+                        "type": "string"
+                    },
+                    "retired": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "IssueEvent": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "type",
+                    "issue"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/IssueEventType"
+                    },
+                    "issue": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Issue"
+                    }
+                }
+            },
+            "IssueEventType": {
+                "type": "string",
+                "enum": [
+                    "issue_found",
+                    "issue_deleted",
+                    "issue_updated"
+                ]
+            },
+            "IssueInternalData": {
+                "type": "object",
+                "required": [
+                    "flags",
+                    "variant",
+                    "issue_details_map"
+                ],
+                "properties": {
+                    "flags": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "variant": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -128,
+                        "maximum": 127
+                    },
+                    "insertion_point_key": {
+                        "type": "string"
+                    },
+                    "insertion_point_identifiers": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/InsertionPointIdentifier"
+                        }
+                    },
+                    "issue_details_map": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "NamedConfiguration": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Payload": {
+                "type": "object",
+                "required": [
+                    "bytes",
+                    "flags"
+                ],
+                "properties": {
+                    "bytes": {
+                        "type": "string",
+                        "format": "byte"
+                    },
+                    "flags": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    }
+                }
+            },
+            "ProtocolOption": {
+                "type": "string",
+                "enum": [
+                    "httpAndHttps",
+                    "specified"
+                ]
+            },
+            "PrototypePollutionEvidence": {
+                "type": "object",
+                "required": [
+                    "composable_evidence",
+                    "pollution_technique",
+                    "pollution_type",
+                    "poc"
+                ],
+                "properties": {
+                    "composable_evidence": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Evidence"
+                    },
+                    "pollution_technique": {
+                        "type": "string"
+                    },
+                    "pollution_type": {
+                        "type": "string"
+                    },
+                    "poc": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RecordedLogin": {
+                "type": "object",
+                "required": [
+                    "label",
+                    "script"
+                ],
+                "properties": {
+                    "label": {
+                        "type": "string"
+                    },
+                    "script": {
+                        "type": "string"
+                    },
+                    "authentication_status_check": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/AuthenticationStatusCheck"
+                    }
+                }
+            },
+            "ReportableCollaboratorEventType": {
+                "type": "string",
+                "enum": [
+                    "dns",
+                    "http",
+                    "smtp"
+                ]
+            },
+            "RequestResponse": {
+                "type": "object",
+                "required": [
+                    "url",
+                    "request",
+                    "was_redirect_followed",
+                    "request_time"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "request": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/Segment"
+                        }
+                    },
+                    "response": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/Segment"
+                        }
+                    },
+                    "was_redirect_followed": {
+                        "type": "boolean"
+                    },
+                    "request_time": {
+                        "type": "string",
+                        "description": "64-bit integer represented as a string"
+                    },
+                    "comment": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Scan": {
+                "type": "object",
+                "required": [
+                    "urls"
+                ],
+                "properties": {
+                    "urls": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "scope": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Scope"
+                    },
+                    "application_logins": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/ApplicationLogin"
+                        }
+                    },
+                    "scan_configurations": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/Configuration"
+                        }
+                    },
+                    "resource_pool": {
+                        "type": "string"
+                    },
+                    "scan_callback": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Callback"
+                    },
+                    "protocol_option": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/ProtocolOption"
+                    }
+                }
+            },
+            "ScanMetrics": {
+                "type": "object",
+                "required": [
+                    "current_url",
+                    "crawl_requests_made",
+                    "crawl_network_errors",
+                    "crawl_unique_locations_visited",
+                    "crawl_requests_queued",
+                    "audit_queue_items_completed",
+                    "audit_queue_items_waiting",
+                    "audit_requests_made",
+                    "audit_network_errors",
+                    "issue_events",
+                    "crawl_and_audit_progress",
+                    "total_elapsed_time"
+                ],
+                "properties": {
+                    "current_url": {
+                        "type": "string"
+                    },
+                    "crawl_requests_made": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "crawl_network_errors": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "crawl_unique_locations_visited": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "crawl_requests_queued": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "audit_queue_items_completed": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "audit_queue_items_waiting": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "audit_requests_made": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "audit_network_errors": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "issue_events": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "crawl_and_audit_caption": {
+                        "type": "string"
+                    },
+                    "crawl_and_audit_progress": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "total_elapsed_time": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    }
+                }
+            },
+            "ScanProgress": {
+                "type": "object",
+                "required": [
+                    "task_id",
+                    "scan_status",
+                    "scan_metrics",
+                    "message",
+                    "issue_events"
+                ],
+                "properties": {
+                    "scan_metrics": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/ScanMetrics"
+                    },
+                    "issue_events": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/IssueEvent"
+                        }
+                    },
+                    "task_id": {
+                        "type": "string"
+                    },
+                    "scan_status": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/ScanStatus"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "error_code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    }
+                }
+            },
+            "ScanStatus": {
+                "type": "string",
+                "enum": [
+                    "initializing",
+                    "paused",
+                    "crawling",
+                    "auditing",
+                    "succeeded",
+                    "failed"
+                ]
+            },
+            "ServerError": {
+                "type": "object",
+                "required": [
+                    "error"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "error": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Severity": {
+                "type": "string",
+                "enum": [
+                    "high",
+                    "medium",
+                    "low",
+                    "info",
+                    "undefined",
+                    "false_positive"
+                ]
+            },
+            "SimpleScope": {
+                "type": "object",
+                "properties": {
+                    "include": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/SimpleScopeDef"
+                        }
+                    },
+                    "exclude": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/SimpleScopeDef"
+                        }
+                    }
+                }
+            },
+            "SimpleScopeDef": {
+                "type": "object",
+                "required": [
+                    "rule"
+                ],
+                "properties": {
+                    "rule": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SmtpCollaboratorEvent": {
+                "type": "object",
+                "required": [
+                    "protocol",
+                    "sender",
+                    "recipients",
+                    "message",
+                    "conversation",
+                    "time_stamp",
+                    "time_between_sending_payload_and_receiving_interaction",
+                    "source_ip_address",
+                    "type",
+                    "interaction_id",
+                    "description"
+                ],
+                "properties": {
+                    "protocol": {
+                        "type": "string"
+                    },
+                    "sender": {
+                        "type": "string"
+                    },
+                    "recipients": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "conversation": {
+                        "type": "string"
+                    },
+                    "time_stamp": {
+                        "type": "string"
+                    },
+                    "time_between_sending_payload_and_receiving_interaction": {
+                        "type": "string",
+                        "description": "64-bit integer represented as a string"
+                    },
+                    "source_ip_address": {
+                        "type": "string"
+                    },
+                    "source_port": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    },
+                    "type": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/ReportableCollaboratorEventType"
+                    },
+                    "interaction_id": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SnipSegment": {
+                "type": "object",
+                "required": [
+                    "length"
+                ],
+                "properties": {
+                    "length": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": -2147483648,
+                        "maximum": 2147483647
+                    }
+                }
+            },
+            "StaticJavascriptAnalysisEvidence": {
+                "type": "object",
+                "required": [
+                    "detail",
+                    "composable_evidence",
+                    "javascript_request_responses",
+                    "code_snippets",
+                    "source_caption",
+                    "sink_caption"
+                ],
+                "properties": {
+                    "detail": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/EvidenceDetail"
+                    },
+                    "composable_evidence": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Evidence"
+                    },
+                    "javascript_request_responses": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/RequestResponse"
+                        }
+                    },
+                    "code_snippets": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "$ref": "#/components/schemas/CodeSnippet"
+                        }
+                    },
+                    "source_caption": {
+                        "type": "string"
+                    },
+                    "sink_caption": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Status": {
+                "type": "string",
+                "enum": [
+                    "crawled",
+                    "out_of_scope",
+                    "crawl_limit",
+                    "consolidated",
+                    "low_value",
+                    "inaccessible",
+                    "network_error"
+                ]
+            },
+            "StoredEvidence": {
+                "type": "object",
+                "required": [
+                    "detail",
+                    "originating_path",
+                    "retrieval_path",
+                    "originating_request_response",
+                    "retrieval_request_response"
+                ],
+                "properties": {
+                    "detail": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/EvidenceDetail"
+                    },
+                    "originating_path": {
+                        "type": "string"
+                    },
+                    "retrieval_path": {
+                        "type": "string"
+                    },
+                    "originating_request_response": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/RequestResponse"
+                    },
+                    "retrieval_request_response": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/RequestResponse"
+                    }
+                }
+            },
+            "TimingBasedEvidence": {
+                "type": "object",
+                "required": [
+                    "evidence",
+                    "orig_response_completed_timer",
+                    "attack_response_completed_timer"
+                ],
+                "properties": {
+                    "evidence": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Evidence"
+                    },
+                    "orig_response_completed_timer": {
+                        "type": "string",
+                        "description": "64-bit integer represented as a string"
+                    },
+                    "attack_response_completed_timer": {
+                        "type": "string",
+                        "description": "64-bit integer represented as a string"
+                    }
+                }
+            },
+            "UsernameAndPasswordLogin": {
+                "type": "object",
+                "required": [
+                    "username",
+                    "password"
+                ],
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
